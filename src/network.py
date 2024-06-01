@@ -16,7 +16,7 @@ class Scale_Model(nn.Module):
                                                padding=1),
                                      nn.ReLU(),
                                      nn.MaxPool2d(2,2))
-        self.expected_size = 32*7*7 
+        self.expected_size = 32*57*57 
         self.fc1 = nn.Linear(self.expected_size,128)
         self.fc2 = nn.Linear(128,64)
         self.output = nn.Linear(64,30)
@@ -32,6 +32,3 @@ class Scale_Model(nn.Module):
         x = F.softmax(x,dim=2)
         return x
 
-if __name__=="__main__":
-    model = Scale_Model()
-    print(model)

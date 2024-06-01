@@ -24,16 +24,16 @@ class Satellite_Data(Dataset):
         label_1 = torch.tensor(self.y1[idx]).long()
         label_2 = torch.tensor(self.y2[idx]).long()
         label_3 = torch.tensor(self.y3[idx]).long()
-        return image, label_1, label_2, label_3
+        return image, [label_1, label_2, label_3]
     
 
 data = pd.read_csv("data/train_test.csv")
 train, test = train_test_split(data, test_size=.1)
 train.to_csv("data/train.csv")
 test.to_csv("data/test.csv")
-train_aug = T.Compose([T.ToPILImage(),T.Resize((28,28)),T.RandomHorizontalFlip(),T.RandomVerticalFlip(),
+train_aug = T.Compose([T.ToPILImage(),T.Resize((228,228)),T.RandomHorizontalFlip(),T.RandomVerticalFlip(),
                         T.RandomRotation(90),T.ToTensor()])
-test_aug = T.Compose([T.ToPILImage(),T.Resize((28,28)),T.ToTensor()])
+test_aug = T.Compose([T.ToPILImage(),T.Resize((228,228)),T.ToTensor()])
 
 train_data = Satellite_Data("data/train.csv",train_aug)
 test_data = Satellite_Data("data/test.csv",test_aug)

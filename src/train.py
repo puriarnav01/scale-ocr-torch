@@ -1,15 +1,14 @@
 import torch
 import torch.nn as nn
 from torch.nn import CrossEntropyLoss
-from network import Scale_Model
-from loader import train_loader, test_loader
 from sklearn.metrics import f1_score
 from copy import deepcopy
+from src.network import Scale_Model
 
 def create_model():
     model = Scale_Model()
     criterion = CrossEntropyLoss()
-    optim = torch.optim.Adam()
+    optim = torch.optim.Adam(model.parameters(), lr=0.001)
     
     return model,criterion,optim
 
@@ -27,6 +26,7 @@ def train_model(model,criterion,optim, train_loader,test_loader,epochs):
         batch_f1 = []
         model.train()
         for X,y in train_loader:
+            y = torch.stack(y, dim=1)
             y_pred = model(X)
             loss = criterion(y_pred.view(-1,10),y.view(-1))
             batch_loss.append(loss.item())
@@ -52,6 +52,7 @@ def train_model(model,criterion,optim, train_loader,test_loader,epochs):
     
         model.eval()
         X,y = next(iter(test_loader))
+        y = torch.stack(y,dim=1)
         with torch.no_grad():
             y_pred = model(X)
             loss = criterion(y_pred.view(-1,10),y.view(-1))
@@ -73,6 +74,6 @@ def train_model(model,criterion,optim, train_loader,test_loader,epochs):
         
         torch.save(model.state_dict(),"models/model_epoch_{}.pth".format(epoch))
     
-    return train_loss, test_loss, train_acc, test_acc, train_f1, test_f1
+    return train_loss, test_loss, train_acc, test_acc, train_f1, test_f1, model
         
         
